@@ -8,28 +8,54 @@ public class SwipePanelsScript : MonoBehaviour
     public GameObject panel;
     public float rangeSwipe = 60;
 
-    private Vector2 startPosTouch;  // повторые касания по экрану
-    private Vector2 startPosSwipe;  // первый раз коснулся экрана
+    /// <summary>
+    /// точка повторого касания по экрану
+    /// </summary>
+    private Vector2 startPosTouch;
+    /// <summary>
+    /// точка первого касания экрана
+    /// </summary>
+    private Vector2 startPosSwipe;
 
-    private Vector2 directionTouch; // полное движение пальца по экрану от касания до отпускания
-    private Vector2 directionSwipe; // расстояние движения пальца за кадр
+    /// <summary>
+    /// направление движения пальца за кадр
+    /// </summary>
+    private Vector2 directionTouch;
+    /// <summary>
+    /// напрвление движения пальца по экрану от касания до отпускания
+    /// </summary>
+    private Vector2 directionSwipe;
 
+    /// <summary>
+    /// Выбранно ли напраление?
+    /// </summary>
     private bool directionChosen;
 
-    private GameObject[] panels;
+    /// <summary>
+    /// Массив точек фиксаций панелей
+    /// </summary>
+    private GameObject[] panelFixPoints;
+
+    /// <summary>
+    /// Список панелей на сцене
+    /// </summary>
     private List<Transform> createdPanels;
 
+    /// <summary>
+    /// Индекс центральной (отображаемой) панели
+    /// </summary>
     public int indexCurrentPanel = 0;
 
+    /// <summary>
+    /// расстояние движения пальца за кадр
+    /// </summary>
     private float distanceTouches = 0;
-    public float timeSwipe = 70;
 
     Touch touch;
 
     void Start()
     {
         createdPanels = GetComponentsInChildren<Transform>().ToList();
-        distanceTouches = createdPanels[1].position.x - createdPanels[0].position.x;
     }
 
     void Update()
@@ -73,7 +99,7 @@ public class SwipePanelsScript : MonoBehaviour
 
     private void MoveToTouch()
     {
-        float currentSpeed = distanceTouches;
+        float currentSpeed;
 
         if (directionTouch.x > 0) currentSpeed = distanceTouches;
         else currentSpeed = -distanceTouches;
