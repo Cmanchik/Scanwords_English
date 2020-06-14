@@ -69,47 +69,7 @@ public class SwipePanelsScript : MonoBehaviour
                     break;
             }
         }
-    }
-
-    void FixedUpdate()
-    {
-        if (directionChosen)
-        {
-            // swipe to direction
-            if (Mathf.Abs(directionSwipe.x) >= rangeSwipe)
-            {
-                foreach (Transform panel in createdPanels)
-                {
-                    //Переделать движение
-                }
-            }
-            // move to start position
-            else
-            {
-                float direction = 0; // speed to swipe
-
-                if (createdPanels[indexCurrentPanel].position.x >= 0) direction = -1;
-                else direction = 1;
-
-                foreach (Transform panel in createdPanels)
-                {
-                    //Переделать движение
-                }
-            }
-
-            Debug.Log(Mathf.Abs(createdPanels[indexCurrentPanel].GetComponent<RectTransform>().anchoredPosition.x));
-            if (Mathf.Abs(createdPanels[indexCurrentPanel].GetComponent<RectTransform>().anchoredPosition.x) <= 1)
-            {
-                Debug.Log(createdPanels[indexCurrentPanel].position.x);
-                foreach (Transform panel in createdPanels)
-                {
-                    //Переделать движение
-                }
-                directionChosen = false;
-            }
-
-        }
-    }
+    
 
     private void MoveToTouch()
     {
