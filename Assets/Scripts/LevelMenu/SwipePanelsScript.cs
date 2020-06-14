@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class SwipePanelsScript : MonoBehaviour
 {
-    public GameObject panel;
     public float rangeSwipe = 60;
 
     /// <summary>
@@ -35,7 +34,7 @@ public class SwipePanelsScript : MonoBehaviour
     /// <summary>
     /// Массив точек фиксаций панелей
     /// </summary>
-    private GameObject[] panelFixPoints;
+    private Transform[] panelFixPoints;
 
     /// <summary>
     /// Список панелей на сцене
@@ -52,12 +51,28 @@ public class SwipePanelsScript : MonoBehaviour
     /// </summary>
     private float distanceTouches = 0;
 
+    /// <summary>
+    /// Скорость смены панелей
+    /// </summary>
+    public float speedSwipe = 5;
+    /// <summary>
+    /// Скорость движения панелей за точкой касания
+    /// </summary>
+    public float speedTouch = 5;
+
+    /// <summary>
+    /// Расстояние между панелями
+    /// </summary>
+    private float distBtwPanels;
+
     Touch touch;
 
     void Start()
     {
         createdPanels = GetComponentsInChildren<Transform>().ToList();
         createdPanels.RemoveAt(0);
+
+        distBtwPanels = Mathf.Abs(createdPanels[0].position.x - createdPanels[1].position.x);
 
         panelFixPoints = LevelsMenuManager.Instance.panelFixPoints;
     }
@@ -95,8 +110,18 @@ public class SwipePanelsScript : MonoBehaviour
                     directionChosen = true;
                     directionSwipe = touch.position - startPosSwipe;
 
-                    Debug.Log(directionSwipe);
+                    if (Mathf.Abs(Vector2.Distance(touch.position, startPosSwipe)) >= rangeSwipe)
+                        ControlSwipe();
+
                     break;
+            }
+        }
+
+        if (directionChosen)
+        {
+            for (int i = 0; i < createdPanels.Count; i++)
+            {
+                createdPanels[i].position = Vector2.Lerp(createdPanels[i].position, panelFixPoints[i].position, speedSwipe);
             }
         }
     }
@@ -110,7 +135,27 @@ public class SwipePanelsScript : MonoBehaviour
 
         foreach (Transform panel in createdPanels)
         {
-            panel.position = Vector3.Lerp(panel.position, new Vector2(panel.position.x + currentDir, panel.position.y), 60);
+            panel.position = Vector3.Lerp(panel.position, new Vector2(panel.position.x + currentDir, panel.position.y), speedTouch);
+        }
+    }
+
+    private void ControlSwipe()
+    {
+        if (directionSwipe.x > 0)
+        {
+            Transform panel = createdPanels[createdPanels.Count - 1];
+            createdPanels.RemoveAt(createdPanels.Count - 1);
+
+            panel.position = new Vector2(createdPanels[0].position.x - distBtwPanels, 0);
+            createdPanels.Insert(0, panel);
+        }
+        else if (directionSwipe.x < 0)
+        {
+            Transform panel = createdPanels[0];
+            createdPanels.RemoveAt(0);
+
+            panel.position = new Vector2(createdPanels[createdPanels.Count - 1].position.x + distBtwPanels, 0);
+            createdPanels.Add(panel);
         }
     }
 }
