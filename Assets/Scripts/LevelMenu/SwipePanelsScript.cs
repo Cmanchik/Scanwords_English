@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditorInternal;
 using UnityEngine;
 
 public class SwipePanelsScript : MonoBehaviour
@@ -56,6 +57,9 @@ public class SwipePanelsScript : MonoBehaviour
     void Start()
     {
         createdPanels = GetComponentsInChildren<Transform>().ToList();
+        createdPanels.RemoveAt(0);
+
+        panelFixPoints = LevelsMenuManager.Instance.panelFixPoints;
     }
 
     void Update()
@@ -99,14 +103,14 @@ public class SwipePanelsScript : MonoBehaviour
 
     private void MoveToTouch()
     {
-        float currentSpeed;
+        float currentDir;
 
-        if (directionTouch.x > 0) currentSpeed = distanceTouches;
-        else currentSpeed = -distanceTouches;
+        if (directionTouch.x > 0) currentDir = distanceTouches;
+        else currentDir = -distanceTouches;
 
         foreach (Transform panel in createdPanels)
         {
-            //Переделать движение
+            panel.position = Vector3.Lerp(panel.position, new Vector2(panel.position.x + currentDir, panel.position.y), 60);
         }
     }
 }
