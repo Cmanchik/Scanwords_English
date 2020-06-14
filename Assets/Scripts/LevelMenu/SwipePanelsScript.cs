@@ -69,7 +69,7 @@ public class SwipePanelsScript : MonoBehaviour
                     break;
             }
         }
-    
+    }
 
     private void MoveToTouch()
     {
