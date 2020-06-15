@@ -26,6 +26,12 @@ public class LevelsMenuManager : Singleton<LevelsMenuManager>
     /// </summary>
     public Transform containerForPanels;
 
+    /// <summary>
+    /// Кол-во уровней на одной панели
+    /// </summary>
+    [Range(1, 6)]
+    public int countLevelsPanels = 2;
+
     void Awake()
     {
         levels = Resources.LoadAll("Levels", typeof(GameObject)).Cast<GameObject>().ToList();
@@ -34,10 +40,20 @@ public class LevelsMenuManager : Singleton<LevelsMenuManager>
 
     void CreateLevel()
     {
-        foreach (Transform point in panelFixPoints)
+        for (int i = 0; i < panelFixPoints.Length; i++)
         {
-            GameObject panel = Instantiate(this.panel, point.position, Quaternion.identity);
+            GameObject panel = Instantiate(this.panel, panelFixPoints[i].position, Quaternion.identity);
             panel.transform.SetParent(containerForPanels);
         }
+    }
+
+    public int GetMaxCountPanels()
+    {
+        return (int)Math.Ceiling(levels.Count() / (double)countLevelsPanels);
+    }
+
+    public int GetMaxCountLevels()
+    {
+        return levels.Count;
     }
 }

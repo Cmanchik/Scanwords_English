@@ -34,7 +34,7 @@ public class SwipePanelsScript : MonoBehaviour
     /// <summary>
     /// Массив точек фиксаций панелей
     /// </summary>
-    private Transform[] panelFixPoints;
+    public Transform[] panelFixPoints;
 
     /// <summary>
     /// Список панелей на сцене
@@ -44,7 +44,7 @@ public class SwipePanelsScript : MonoBehaviour
     /// <summary>
     /// Индекс центральной (отображаемой) панели
     /// </summary>
-    public int indexCurrentPanel = 0;
+    public int indexCurrentPanel = 1;
 
     /// <summary>
     /// расстояние движения пальца за кадр
@@ -72,13 +72,14 @@ public class SwipePanelsScript : MonoBehaviour
         createdPanels = GetComponentsInChildren<Transform>().ToList();
         createdPanels.RemoveAt(0);
 
-        distBtwPanels = Mathf.Abs(createdPanels[0].position.x - createdPanels[1].position.x);
+        createdPanels[0].gameObject.SetActive(false);
 
-        panelFixPoints = LevelsMenuManager.Instance.panelFixPoints;
+        distBtwPanels = Mathf.Abs(createdPanels[0].position.x - createdPanels[1].position.x);
     }
 
     void Update()
     {
+        
         // Track a single touch as a direction control.
         if (Input.touchCount > 0)
         {
@@ -143,19 +144,49 @@ public class SwipePanelsScript : MonoBehaviour
     {
         if (directionSwipe.x > 0)
         {
-            Transform panel = createdPanels[createdPanels.Count - 1];
-            createdPanels.RemoveAt(createdPanels.Count - 1);
+            if (indexCurrentPanel != 1)
+            {
+                Transform panel = createdPanels[createdPanels.Count - 1];
+                createdPanels.RemoveAt(createdPanels.Count - 1);
 
-            panel.position = new Vector2(createdPanels[0].position.x - distBtwPanels, 0);
-            createdPanels.Insert(0, panel);
+                if (!panel.gameObject.activeSelf) panel.gameObject.SetActive(true);
+
+                panel.position = new Vector2(createdPanels[0].position.x - distBtwPanels, 0);
+                createdPanels.Insert(0, panel);
+
+                
+
+                if (indexCurrentPanel == 2)
+                {
+                    createdPanels[0].gameObject.SetActive(false);
+                }
+
+                indexCurrentPanel--;
+            }
         }
         else if (directionSwipe.x < 0)
         {
-            Transform panel = createdPanels[0];
-            createdPanels.RemoveAt(0);
+            if (indexCurrentPanel != LevelsMenuManager.Instance.GetMaxCountPanels())
+            {
 
-            panel.position = new Vector2(createdPanels[createdPanels.Count - 1].position.x + distBtwPanels, 0);
-            createdPanels.Add(panel);
+
+                Transform panel = createdPanels[0];
+                createdPanels.RemoveAt(0);
+
+                if (!panel.gameObject.activeSelf) panel.gameObject.SetActive(true);
+
+                panel.position = new Vector2(createdPanels[createdPanels.Count - 1].position.x + distBtwPanels, 0);
+                createdPanels.Add(panel);
+
+                
+
+                if (indexCurrentPanel == LevelsMenuManager.Instance.GetMaxCountPanels() - 1)
+                {
+                    createdPanels[createdPanels.Count - 1].gameObject.SetActive(false);
+                }
+
+                indexCurrentPanel++;
+            }
         }
     }
 }
