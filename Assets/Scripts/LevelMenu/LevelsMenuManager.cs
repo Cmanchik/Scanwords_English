@@ -12,6 +12,11 @@ public class LevelsMenuManager : Singleton<LevelsMenuManager>
     public GameObject panel;
 
     /// <summary>
+    /// Шаблон кнопки
+    /// </summary>
+    public GameObject button;
+
+    /// <summary>
     /// Массив точек фиксаций панелей
     /// </summary>
     public Transform[] panelFixPoints;
@@ -26,11 +31,13 @@ public class LevelsMenuManager : Singleton<LevelsMenuManager>
     /// </summary>
     public Transform containerForPanels;
 
+    
+    [SerializeField]
+    private int countLevelsPanels;
     /// <summary>
     /// Кол-во уровней на одной панели
     /// </summary>
-    [Range(1, 6)]
-    public int countLevelsPanels = 2;
+    public int CountLevelsPanels { get { return countLevelsPanels; } private set { countLevelsPanels = value; } }
 
     void Awake()
     {

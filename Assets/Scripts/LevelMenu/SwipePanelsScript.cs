@@ -34,7 +34,7 @@ public class SwipePanelsScript : MonoBehaviour
     /// <summary>
     /// Массив точек фиксаций панелей
     /// </summary>
-    public Transform[] panelFixPoints;
+    private Transform[] panelFixPoints;
 
     /// <summary>
     /// Список панелей на сцене
@@ -69,11 +69,17 @@ public class SwipePanelsScript : MonoBehaviour
 
     void Start()
     {
-        createdPanels = GetComponentsInChildren<Transform>().ToList();
-        createdPanels.RemoveAt(0);
+        createdPanels = GameObject.FindGameObjectsWithTag("LevelPanel").Select(rec => rec.GetComponent<Transform>()).ToList();
+
+        for (int i = 0; i < createdPanels.Count; i++)
+        {
+            createdPanels[i].GetComponent<LevelPanelScript>().InitButtons(i);
+        }
 
         createdPanels[0].gameObject.SetActive(false);
+        if (LevelsMenuManager.Instance.GetMaxCountPanels() == 1) createdPanels[createdPanels.Count - 1].gameObject.SetActive(false);
 
+        panelFixPoints = LevelsMenuManager.Instance.panelFixPoints;
         distBtwPanels = Mathf.Abs(createdPanels[0].position.x - createdPanels[1].position.x);
     }
 
@@ -149,12 +155,12 @@ public class SwipePanelsScript : MonoBehaviour
                 Transform panel = createdPanels[createdPanels.Count - 1];
                 createdPanels.RemoveAt(createdPanels.Count - 1);
 
-                if (!panel.gameObject.activeSelf) panel.gameObject.SetActive(true);
+                if (!panel.gameObject.activeInHierarchy) panel.gameObject.SetActive(true);
 
                 panel.position = new Vector2(createdPanels[0].position.x - distBtwPanels, 0);
-                createdPanels.Insert(0, panel);
+                panel.GetComponent<LevelPanelScript>().InitButtons(indexCurrentPanel - 2);
 
-                
+                createdPanels.Insert(0, panel);
 
                 if (indexCurrentPanel == 2)
                 {
@@ -168,17 +174,14 @@ public class SwipePanelsScript : MonoBehaviour
         {
             if (indexCurrentPanel != LevelsMenuManager.Instance.GetMaxCountPanels())
             {
-
-
                 Transform panel = createdPanels[0];
                 createdPanels.RemoveAt(0);
 
-                if (!panel.gameObject.activeSelf) panel.gameObject.SetActive(true);
+                if (!panel.gameObject.activeInHierarchy) panel.gameObject.SetActive(true);
 
                 panel.position = new Vector2(createdPanels[createdPanels.Count - 1].position.x + distBtwPanels, 0);
+                panel.GetComponent<LevelPanelScript>().InitButtons(indexCurrentPanel + 2);
                 createdPanels.Add(panel);
-
-                
 
                 if (indexCurrentPanel == LevelsMenuManager.Instance.GetMaxCountPanels() - 1)
                 {
