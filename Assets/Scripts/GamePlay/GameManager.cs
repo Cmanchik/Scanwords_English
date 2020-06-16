@@ -15,6 +15,15 @@ public class GameManager : Singleton<GameManager>
     private int level = 1;
     public int Level { get { return level; } }
 
+    [SerializeField]
+    private int score = 0;
+    public int Score { get { return score; } }
+
+    public int reduceScoreCount;
+    public int increaseScoreCount;
+
+    public TextMeshPro scoreText;
+
     public GameObject pointLevelPanel;
 
     private GameObject scanwordPanel;
@@ -32,6 +41,7 @@ public class GameManager : Singleton<GameManager>
     void Start()
     {
         LoadLevel();
+        LoadScore();
         CreateLevel();
     }
 
@@ -65,11 +75,39 @@ public class GameManager : Singleton<GameManager>
             if (wordScript.Word == word)
             {
                 wordScript.ShowWord();
+                IncreaseScore();
                 break;
             }
         }
 
         CheckWin();
+    }
+
+    public void ShowRandomLetter()
+    {
+        WordScript[] scripts = wordScripts.Where(rec => rec.isDisplayed == false).ToArray();
+        System.Random random = new System.Random();
+
+        ReduceScore();
+        if (scripts[random.Next(0, scripts.Length)].ShowRandomLetter()) IncreaseScore();
+    }
+
+    private void ReduceScore()
+    {
+        if (score < reduceScoreCount)
+        {
+            score = 0;
+            return;
+        }
+
+        score -= reduceScoreCount;
+        scoreText.text = Convert.ToString(score);
+    }
+
+    private void IncreaseScore()
+    {
+        score += increaseScoreCount;
+        scoreText.text = Convert.ToString(score);
     }
 
     void CheckWin()
@@ -83,12 +121,14 @@ public class GameManager : Singleton<GameManager>
         level++;
 
         SaveLevel();
+        SaveScore();
         CreateLevel();
     }
 
     public void LoadLevelsScene()
     {
         SaveLevel();
+        SaveScore();
         SaveWords();
         SceneManager.LoadScene(levelsScene);
     }
@@ -96,6 +136,7 @@ public class GameManager : Singleton<GameManager>
     public void LoadMainMenuScene()
     {
         SaveLevel();
+        SaveScore();
         SaveWords();
         SceneManager.LoadScene(mainMenuScene);
     }
@@ -103,6 +144,7 @@ public class GameManager : Singleton<GameManager>
     private void OnApplicationPause(bool pause)
     {
         SaveLevel();
+        SaveScore();
         SaveWords();
     }
 
@@ -132,6 +174,17 @@ public class GameManager : Singleton<GameManager>
             }
         }
         PlayerPrefs.SetString(Convert.ToString(level) + " level", activeWords.ToString());
+    }
+
+    private void SaveScore()
+    {
+        PlayerPrefs.SetInt("Score", score);
+    }
+
+    private void LoadScore()
+    {
+        score = PlayerPrefs.GetInt("Score", 0);
+        scoreText.text = Convert.ToString(score);
     }
 
     private void LoadLevel()
