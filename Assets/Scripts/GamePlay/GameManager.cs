@@ -22,10 +22,6 @@ public class GameManager : Singleton<GameManager>
 
     private WordScript[] wordScripts;
 
-    public RectTransform mainMenu;
-    public RectTransform gameplayMenu;
-    public RectTransform gameoverMenu;
-
     [SerializeField]
     private string mainMenuScene = "MainMenuScene";
     [SerializeField]
@@ -41,9 +37,7 @@ public class GameManager : Singleton<GameManager>
 
     private void CreateLevel()
     {
-        if (mainMenu) mainMenu.gameObject.SetActive(false);
-        if (gameoverMenu) gameoverMenu.gameObject.SetActive(false);
-        if (gameplayMenu) gameplayMenu.gameObject.SetActive(true);
+        if (level > PlayerPrefs.GetInt("MaxCountLevels")) LoadEndScene();
 
         if (currentPanel)
             Destroy(currentPanel);
@@ -106,10 +100,10 @@ public class GameManager : Singleton<GameManager>
         SceneManager.LoadScene(mainMenuScene);
     }
 
-    private void OnApplicationQuit()
+    private void OnApplicationPause(bool pause)
     {
-        //SaveLevel();
-        //SaveWords();
+        SaveLevel();
+        SaveWords();
     }
 
     /// <summary>
@@ -120,7 +114,7 @@ public class GameManager : Singleton<GameManager>
         // Сохранение текущего уровня
         PlayerPrefs.SetInt("CurrentLevel", level);
 
-        if (PlayerPrefs.GetInt("MaxLevel") < level) PlayerPrefs.SetInt("MaxLevel", level);
+        if (PlayerPrefs.GetInt("MaxActiveLevel") < level) PlayerPrefs.SetInt("MaxActiveLevel", level);
     }
 
     /// <summary>
@@ -159,5 +153,10 @@ public class GameManager : Singleton<GameManager>
         {
             СheckWord(word);
         }
+    }
+
+    private void LoadEndScene()
+    {
+        SceneManager.LoadScene(3);
     }
 }

@@ -3,33 +3,21 @@ using UnityEngine;
 using TMPro;
 using System;
 using UnityEngine.UI;
+using System.Linq;
 
 public class MainMenuManager : Singleton<MainMenuManager>
 {
-    [SerializeField]
-    private string gameplayScene = "GameplayScene";
-    [SerializeField]
-    private string levelsScene = "LevelsScene";
-
-    AsyncOperation asyncOperationGameScene;
-    AsyncOperation asyncOperationLevelsScene;
-
     public Text currentLevelPanel;
 
     void Start()
     {
-        asyncOperationGameScene = SceneManager.LoadSceneAsync(gameplayScene, LoadSceneMode.Single);
-        asyncOperationLevelsScene = SceneManager.LoadSceneAsync(levelsScene, LoadSceneMode.Single);
-
-        asyncOperationGameScene.allowSceneActivation = false;
-        asyncOperationLevelsScene.allowSceneActivation = false;
-
+        PlayerPrefs.SetInt("MaxCountLevels", Resources.LoadAll("Levels", typeof(GameObject)).Cast<GameObject>().Count());
         currentLevelPanel.text = Convert.ToString(PlayerPrefs.GetInt("CurrentLevel", 1)) + " LEVEL";
     }
 
     public void LoadGameplayScene()
     {
-        asyncOperationGameScene.allowSceneActivation = true;
+        SceneManager.LoadScene(1);
     }
 
     public void LoadLevelsScene()

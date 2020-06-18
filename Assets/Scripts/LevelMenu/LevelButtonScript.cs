@@ -23,7 +23,7 @@ public class LevelButtonScript : MonoBehaviour
         level = value;
         text.text = Convert.ToString(value);
 
-        if (level > PlayerPrefs.GetInt("MaxLevel", 1)) button.interactable = false;
+        if (level > PlayerPrefs.GetInt("MaxActiveLevel", 1)) button.interactable = false;
     }
 
     public void Load()
