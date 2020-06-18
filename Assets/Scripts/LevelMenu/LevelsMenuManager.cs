@@ -69,4 +69,9 @@ public class LevelsMenuManager : Singleton<LevelsMenuManager>
     {
         SceneManager.LoadScene(0);
     }
+
+    public void LoadGameplayScene()
+    {
+        SceneManager.LoadScene(1);
+    }
 }
