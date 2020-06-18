@@ -1,6 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -30,6 +35,7 @@ public class GameManager : Singleton<GameManager>
 
     void Start()
     {
+        LoadLevel();
         CreateLevel();
     }
 
@@ -45,7 +51,6 @@ public class GameManager : Singleton<GameManager>
         scanwordPanel = Resources.Load("Levels/ScanwordPanel_" + level) as GameObject;
         currentPanel = Instantiate(scanwordPanel, pointLevelPanel.transform.position, Quaternion.identity);
         wordScripts = currentPanel.GetComponentsInChildren<WordScript>();
-        
 
         buttonLettersScript.RemoveButtons();
 
@@ -54,8 +59,9 @@ public class GameManager : Singleton<GameManager>
         {
             words.Add(wordScript.Word);
         }
-
         buttonLettersScript.InitButtons(words.ToArray());
+
+        LoadWords();
     }
 
     public void СheckWord(string word)
@@ -79,17 +85,79 @@ public class GameManager : Singleton<GameManager>
             if (!wordScript.isDisplayed) return;
         }
 
+        PlayerPrefs.DeleteKey(level + " level");
         level++;
+
+        SaveLevel();
         CreateLevel();
     }
 
     public void LoadLevelsScene()
     {
+        SaveLevel();
+        SaveWords();
         SceneManager.LoadScene(levelsScene);
     }
 
     public void LoadMainMenuScene()
     {
+        SaveLevel();
+        SaveWords();
         SceneManager.LoadScene(mainMenuScene);
+    }
+
+    private void OnApplicationQuit()
+    {
+        //SaveLevel();
+        //SaveWords();
+    }
+
+    /// <summary>
+    /// Сохранение значения текущего уровня
+    /// </summary>
+    private void SaveLevel()
+    {
+        // Сохранение текущего уровня
+        PlayerPrefs.SetInt("CurrentLevel", level);
+
+        if (PlayerPrefs.GetInt("MaxLevel") < level) PlayerPrefs.SetInt("MaxLevel", level);
+    }
+
+    /// <summary>
+    /// Сохранение отображенных слов на уровне
+    /// </summary>
+    private void SaveWords()
+    {
+        // сохраняем только отображенные слова
+        StringBuilder activeWords = new StringBuilder("");
+        foreach (WordScript word in wordScripts)
+        {
+            if (word.isDisplayed)
+            {
+                activeWords.Append(word.Word + "|");
+            }
+        }
+        PlayerPrefs.SetString(Convert.ToString(level) + " level", activeWords.ToString());
+    }
+
+    private void LoadLevel()
+    {
+        level = PlayerPrefs.GetInt("CurrentLevel", 1);
+    }
+
+    /// <summary>
+    /// Загрузка отображенных слов уровня
+    /// </summary>
+    private void LoadWords()
+    {
+        if (!PlayerPrefs.HasKey(level + " level")) return;
+
+        string activeWords = PlayerPrefs.GetString(Convert.ToString(level) + " level");
+        string[] words = activeWords.Split('|');
+
+        foreach (string word in words)
+        {
+            СheckWord(word);
+        }
     }
 }

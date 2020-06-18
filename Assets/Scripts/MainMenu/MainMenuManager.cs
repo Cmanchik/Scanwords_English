@@ -1,6 +1,8 @@
 ﻿using UnityEngine.SceneManagement;
 using UnityEngine;
 using TMPro;
+using System;
+using UnityEngine.UI;
 
 public class MainMenuManager : Singleton<MainMenuManager>
 {
@@ -12,7 +14,7 @@ public class MainMenuManager : Singleton<MainMenuManager>
     AsyncOperation asyncOperationGameScene;
     AsyncOperation asyncOperationLevelsScene;
 
-    public GameObject currentLevelPanel;
+    public Text currentLevelPanel;
 
     void Start()
     {
@@ -22,7 +24,7 @@ public class MainMenuManager : Singleton<MainMenuManager>
         asyncOperationGameScene.allowSceneActivation = false;
         asyncOperationLevelsScene.allowSceneActivation = false;
 
-        currentLevelPanel.GetComponentInChildren<TextMeshPro>().text = GameManager.Instance.Level + "\nLevel";
+        currentLevelPanel.text = Convert.ToString(PlayerPrefs.GetInt("CurrentLevel", 1)) + " LEVEL";
     }
 
     public void LoadGameplayScene()
@@ -32,6 +34,11 @@ public class MainMenuManager : Singleton<MainMenuManager>
 
     public void LoadLevelsScene()
     {
-        asyncOperationLevelsScene.allowSceneActivation = true;
+        SceneManager.LoadScene(2);
+    }
+
+    public void Reset()
+    {
+        PlayerPrefs.DeleteAll();
     }
 }

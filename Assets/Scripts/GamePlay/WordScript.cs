@@ -13,7 +13,7 @@ public class WordScript : MonoBehaviour
 
     private TextMeshPro[] textCompLetters;
 
-    void Start()
+    void Awake()
     {
         textCompLetters = GetComponentsInChildren<TextMeshPro>();
         char[] lettersWord = word.ToCharArray();

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelsMenuManager : Singleton<LevelsMenuManager>
 {
@@ -62,5 +63,10 @@ public class LevelsMenuManager : Singleton<LevelsMenuManager>
     public int GetMaxCountLevels()
     {
         return levels.Count;
+    }
+
+    public void LoadMainMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 }
